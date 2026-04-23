@@ -73,6 +73,25 @@ function handleTimerForState() {
   updateTimer();
 }
 
+function updateBoardMetrics() {
+  const viewportWidth = window.innerWidth;
+  const outerPadding = viewportWidth <= 640 ? 40 : 72;
+  const cardInnerPadding = viewportWidth <= 640 ? 40 : 56;
+  const boardPadding = 28;
+  const gap = 6;
+  const availableWidth = Math.max(280, viewportWidth - outerPadding - cardInnerPadding - boardPadding);
+  const maxCellSize = game.columns >= 30 ? 46 : game.columns >= 16 ? 42 : 52;
+  const minCellSize = game.columns >= 30 ? 18 : game.columns >= 16 ? 22 : 30;
+  const fittedCellSize = Math.floor((availableWidth - gap * (game.columns - 1)) / game.columns);
+  const cellSize = Math.max(minCellSize, Math.min(maxCellSize, fittedCellSize));
+  const boardWidth = cellSize * game.columns + gap * (game.columns - 1) + boardPadding;
+  const cardWidth = boardWidth + cardInnerPadding;
+
+  boardElement.style.setProperty("--columns", String(game.columns));
+  boardElement.style.setProperty("--cell-size", `${cellSize}px`);
+  document.documentElement.style.setProperty("--card-width", `${cardWidth}px`);
+}
+
 function startTimerIfNeeded() {
   if (startedAt || game.status !== "playing") {
     return;
@@ -85,14 +104,10 @@ function startTimerIfNeeded() {
 
 function startNewGame() {
   game = window.createGameForDifficulty(difficultySelect.value);
-  boardElement.style.setProperty("--columns", String(game.columns));
-  boardElement.style.setProperty(
-    "--cell-size",
-    game.columns >= 30 ? "26px" : game.columns >= 16 ? "30px" : "46px",
-  );
   startedAt = null;
   frozenElapsedSeconds = 0;
   stopTimer();
+  updateBoardMetrics();
   render();
 }
 
@@ -212,5 +227,6 @@ boardElement.addEventListener("contextmenu", (event) => {
 difficultySelect.addEventListener("change", startNewGame);
 
 restartButton.addEventListener("click", startNewGame);
+window.addEventListener("resize", updateBoardMetrics);
 
 startNewGame();

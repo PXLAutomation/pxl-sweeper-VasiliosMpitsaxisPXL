@@ -48,7 +48,8 @@ button {
 }
 
 .game-card {
-  width: min(100%, 620px);
+  width: min(100%, var(--card-width, 620px));
+  max-width: calc(100vw - 40px);
   padding: 28px;
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-lg);
@@ -167,8 +168,6 @@ h1 {
   grid-template-columns: repeat(var(--columns, 9), var(--cell-size));
   gap: 6px;
   width: fit-content;
-  max-width: 100%;
-  overflow: auto;
   margin: 0 auto;
   padding: 14px;
   border-radius: 22px;
@@ -269,6 +268,7 @@ h1 {
 
 @media (max-width: 640px) {
   .game-card {
+    width: 100%;
     padding: 20px;
   }
 
