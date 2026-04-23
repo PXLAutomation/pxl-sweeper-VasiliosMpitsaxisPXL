@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PXL Sweeper</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="game-card" aria-label="PXL Sweeper game">
+        <header class="game-header">
+          <div>
+            <p class="eyebrow">Classic rules, modern finish</p>
+            <h1>PXL Sweeper</h1>
+          </div>
+          <button id="restart-button" class="restart-button" type="button">
+            New Game
+          </button>
+        </header>
+
+        <section class="status-panel" aria-label="Game status">
+          <div class="status-block">
+            <span class="status-label">Status</span>
+            <strong id="status-text">In progress</strong>
+          </div>
+          <div class="status-block">
+            <span class="status-label">Board</span>
+            <strong>9 x 9 / 10 mines</strong>
+          </div>
+        </section>
+
+        <div id="board" class="board" role="grid" aria-label="Minesweeper board"></div>
+
+        <p class="help-text">
+          Left click reveals a cell. Right click toggles a flag.
+        </p>
+      </section>
+    </main>
+
+    <script src="./src/game.js"></script>
+    <script src="./src/main.js"></script>
+  </body>
+</html>
