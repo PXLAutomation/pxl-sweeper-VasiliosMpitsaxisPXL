@@ -60,16 +60,26 @@ function ensureTimerRunning() {
 }
 
 function handleTimerForState() {
-  if (game.status === "playing") {
-    ensureTimerRunning();
-  } else if (startedAt) {
+  if (game.status !== "playing" && startedAt) {
     frozenElapsedSeconds = getElapsedSeconds();
     startedAt = null;
     stopTimer();
   } else {
-    stopTimer();
+    if (game.status !== "playing") {
+      stopTimer();
+    }
   }
 
+  updateTimer();
+}
+
+function startTimerIfNeeded() {
+  if (startedAt || game.status !== "playing") {
+    return;
+  }
+
+  startedAt = Date.now();
+  ensureTimerRunning();
   updateTimer();
 }
 
@@ -80,10 +90,9 @@ function startNewGame() {
     "--cell-size",
     game.columns >= 30 ? "26px" : game.columns >= 16 ? "30px" : "46px",
   );
-  startedAt = Date.now();
+  startedAt = null;
   frozenElapsedSeconds = 0;
   stopTimer();
-  ensureTimerRunning();
   render();
 }
 
@@ -174,7 +183,12 @@ boardElement.addEventListener("click", (event) => {
     return;
   }
 
-  game.reveal(Number(cellButton.dataset.row), Number(cellButton.dataset.column));
+  const result = game.reveal(Number(cellButton.dataset.row), Number(cellButton.dataset.column));
+
+  if (result.changed) {
+    startTimerIfNeeded();
+  }
+
   render();
 });
 
@@ -186,7 +200,12 @@ boardElement.addEventListener("contextmenu", (event) => {
   }
 
   event.preventDefault();
-  game.toggleFlag(Number(cellButton.dataset.row), Number(cellButton.dataset.column));
+  const result = game.toggleFlag(Number(cellButton.dataset.row), Number(cellButton.dataset.column));
+
+  if (result.changed) {
+    startTimerIfNeeded();
+  }
+
   render();
 });
 
