@@ -14,9 +14,19 @@
             <p class="eyebrow">Classic rules, modern finish</p>
             <h1>PXL Sweeper</h1>
           </div>
-          <button id="restart-button" class="restart-button" type="button">
-            New Game
-          </button>
+          <div class="controls">
+            <label class="difficulty-select">
+              <span>Mode</span>
+              <select id="difficulty-select" aria-label="Select difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </label>
+            <button id="restart-button" class="restart-button" type="button">
+              New Game
+            </button>
+          </div>
         </header>
 
         <section class="status-panel" aria-label="Game status">
@@ -25,8 +35,16 @@
             <strong id="status-text">In progress</strong>
           </div>
           <div class="status-block">
-            <span class="status-label">Board</span>
-            <strong>9 x 9 / 10 mines</strong>
+            <span class="status-label">Mode</span>
+            <strong id="difficulty-text">Easy</strong>
+          </div>
+          <div class="status-block">
+            <span class="status-label">Mines</span>
+            <strong id="mine-count-text">10</strong>
+          </div>
+          <div class="status-block">
+            <span class="status-label">Time</span>
+            <strong id="timer-text">0s</strong>
           </div>
         </section>
 

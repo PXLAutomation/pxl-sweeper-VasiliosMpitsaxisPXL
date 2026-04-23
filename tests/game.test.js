@@ -1,7 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createGame } from "../src/game-core.js";
+import {
+  createGame,
+  createGameForDifficulty,
+  DIFFICULTY_PRESETS,
+} from "../src/game-core.js";
 
 function createFixedRandom(values) {
   let index = 0;
@@ -126,4 +130,22 @@ test("restart resets the board state", () => {
   assert.equal(game.firstMove, true);
   assert.equal(game.revealedSafeCells, 0);
   assert.equal(game.board.flat().every((cell) => !cell.isMine && !cell.isRevealed && !cell.isFlagged), true);
+});
+
+test("difficulty presets create the expected classic board sizes", () => {
+  const mediumGame = createGameForDifficulty("medium");
+  const hardGame = createGameForDifficulty("hard");
+
+  assert.deepEqual(DIFFICULTY_PRESETS.easy, {
+    label: "Easy",
+    rows: 9,
+    columns: 9,
+    mines: 10,
+  });
+  assert.equal(mediumGame.rows, 16);
+  assert.equal(mediumGame.columns, 16);
+  assert.equal(mediumGame.mines, 40);
+  assert.equal(hardGame.rows, 16);
+  assert.equal(hardGame.columns, 30);
+  assert.equal(hardGame.mines, 99);
 });

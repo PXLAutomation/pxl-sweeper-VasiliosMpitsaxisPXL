@@ -1,14 +1,22 @@
 (() => {
+const DIFFICULTY_PRESETS = {
+  easy: { label: "Easy", rows: 9, columns: 9, mines: 10 },
+  medium: { label: "Medium", rows: 16, columns: 16, mines: 40 },
+  hard: { label: "Hard", rows: 16, columns: 30, mines: 99 },
+};
+
 class MinesweeperGame {
   constructor({
     rows = 9,
     columns = 9,
     mines = 10,
+    difficulty = "easy",
     random = Math.random,
   } = {}) {
     this.rows = rows;
     this.columns = columns;
     this.mines = mines;
+    this.difficulty = difficulty;
     this.random = random;
     this.restart();
   }
@@ -177,6 +185,20 @@ function createGame(options) {
   return new MinesweeperGame(options);
 }
 
+function createGameForDifficulty(difficulty, options = {}) {
+  const preset = DIFFICULTY_PRESETS[difficulty] || DIFFICULTY_PRESETS.easy;
+
+  return new MinesweeperGame({
+    ...options,
+    difficulty,
+    rows: preset.rows,
+    columns: preset.columns,
+    mines: preset.mines,
+  });
+}
+
 window.MinesweeperGame = MinesweeperGame;
+window.DIFFICULTY_PRESETS = DIFFICULTY_PRESETS;
 window.createGame = createGame;
+window.createGameForDifficulty = createGameForDifficulty;
 })();

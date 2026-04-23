@@ -69,6 +69,33 @@ button {
   margin-bottom: 20px;
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.difficulty-select {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.difficulty-select select {
+  min-width: 126px;
+  padding: 10px 14px;
+  border: 1px solid rgba(122, 143, 165, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text);
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .eyebrow,
 .status-label,
 .help-text {
@@ -115,6 +142,7 @@ h1 {
   border: 1px solid rgba(122, 143, 165, 0.18);
   border-radius: var(--radius-md);
   background: rgba(245, 249, 253, 0.85);
+  flex-wrap: wrap;
 }
 
 .status-block {
@@ -136,9 +164,11 @@ h1 {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(9, var(--cell-size));
+  grid-template-columns: repeat(var(--columns, 9), var(--cell-size));
   gap: 6px;
   width: fit-content;
+  max-width: 100%;
+  overflow: auto;
   margin: 0 auto;
   padding: 14px;
   border-radius: 22px;
@@ -248,7 +278,16 @@ h1 {
     align-items: stretch;
   }
 
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .restart-button {
+    width: 100%;
+  }
+
+  .difficulty-select select {
     width: 100%;
   }
 }

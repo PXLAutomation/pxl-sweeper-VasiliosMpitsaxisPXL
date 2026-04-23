@@ -1,8 +1,15 @@
 const boardElement = document.querySelector("#board");
 const restartButton = document.querySelector("#restart-button");
+const difficultySelect = document.querySelector("#difficulty-select");
 const statusText = document.querySelector("#status-text");
+const difficultyText = document.querySelector("#difficulty-text");
+const mineCountText = document.querySelector("#mine-count-text");
+const timerText = document.querySelector("#timer-text");
 
-const game = window.createGame();
+let game = window.createGameForDifficulty(difficultySelect.value);
+let timerId = null;
+let startedAt = null;
+let frozenElapsedSeconds = 0;
 
 const statusLabels = {
   playing: "In progress",
@@ -10,9 +17,84 @@ const statusLabels = {
   lost: "Mine triggered",
 };
 
+function getPreset() {
+  return window.DIFFICULTY_PRESETS[game.difficulty] || window.DIFFICULTY_PRESETS.easy;
+}
+
+function formatElapsed(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  if (minutes === 0) {
+    return `${remainingSeconds}s`;
+  }
+
+  return `${minutes}m ${String(remainingSeconds).padStart(2, "0")}s`;
+}
+
+function getElapsedSeconds() {
+  if (!startedAt) {
+    return frozenElapsedSeconds;
+  }
+
+  return Math.floor((Date.now() - startedAt) / 1000);
+}
+
+function updateTimer() {
+  timerText.textContent = formatElapsed(getElapsedSeconds());
+}
+
+function stopTimer() {
+  if (timerId) {
+    window.clearInterval(timerId);
+    timerId = null;
+  }
+}
+
+function ensureTimerRunning() {
+  if (timerId) {
+    return;
+  }
+
+  timerId = window.setInterval(updateTimer, 1000);
+}
+
+function handleTimerForState() {
+  if (game.status === "playing") {
+    ensureTimerRunning();
+  } else if (startedAt) {
+    frozenElapsedSeconds = getElapsedSeconds();
+    startedAt = null;
+    stopTimer();
+  } else {
+    stopTimer();
+  }
+
+  updateTimer();
+}
+
+function startNewGame() {
+  game = window.createGameForDifficulty(difficultySelect.value);
+  boardElement.style.setProperty("--columns", String(game.columns));
+  boardElement.style.setProperty(
+    "--cell-size",
+    game.columns >= 30 ? "26px" : game.columns >= 16 ? "30px" : "46px",
+  );
+  startedAt = Date.now();
+  frozenElapsedSeconds = 0;
+  stopTimer();
+  ensureTimerRunning();
+  render();
+}
+
 function render() {
+  const preset = getPreset();
+
   statusText.textContent = statusLabels[game.status];
   statusText.className = "";
+  difficultyText.textContent = preset.label;
+  mineCountText.textContent = String(game.mines);
+  difficultySelect.value = game.difficulty;
 
   if (game.status === "won") {
     statusText.classList.add("status-win");
@@ -61,6 +143,8 @@ function render() {
       boardElement.append(button);
     }
   }
+
+  handleTimerForState();
 }
 
 function getCellLabel(cell) {
@@ -106,9 +190,8 @@ boardElement.addEventListener("contextmenu", (event) => {
   render();
 });
 
-restartButton.addEventListener("click", () => {
-  game.restart();
-  render();
-});
+difficultySelect.addEventListener("change", startNewGame);
 
-render();
+restartButton.addEventListener("click", startNewGame);
+
+startNewGame();
